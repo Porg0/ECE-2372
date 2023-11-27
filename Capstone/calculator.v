@@ -9,6 +9,8 @@
         3) 1 button to switch between showing the inputs values and showing the result
         4) 1 button to reset the displays to 0
         5) 2 7 segment displays to show our values
+
+ 	Credit to Andrew Slagel for help on the verilog
 */
 
 module Count4( // 4bit counter
