@@ -5,9 +5,9 @@
     Project Name: 4 bit adder/subtractor with 7seg display
     Project Details:
         1) 2 buttons that allow increment input values on 7seg
-        2) 1 button to control if its adding or subtracting
-        3) 1 button to switch between showing the inputs values and showing the result
-        4) 1 button to reset the displays to 0
+        2) 1 switch to control if its adding or subtracting
+        3) 1 switch to switch between showing the inputs values and showing the result
+        4) 1 switch to reset the displays to 0
         5) 2 7 segment displays to show our values
 
  	Credit to Andrew Slagel for help on the verilog
