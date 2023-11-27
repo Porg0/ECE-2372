@@ -1,5 +1,6 @@
 /*
-    Name: Alejandro Bonilla
+    Group: 2
+    Members: Alejandro Bonilla, Jackson Blackmon, Nick Turner, Jacob Wallace
     Date: 11/6/23
     Project Name: 4 bit adder/subtractor with 7seg display
     Project Details:
@@ -8,33 +9,19 @@
         3) 1 button to switch between showing the inputs values and showing the result
         4) 1 button to reset the displays to 0
         5) 2 7 segment displays to show our values
-
-    Project Status
-        The code is running and is able to pass values in the test-bench.
-        Issue is that the Feed and Dig wires do not like to properly pass to eachother thus,
-        causing incorrect outputs when reseting or pressing equal
-    
-    11/17
-        The module count has been lowered, and most work together
-        When the equal button is instated the verilog no longer functions
-            -By this I mean that it is preventing the result wire from passing value somehow
-
-    11/20
-        The code is now working properly
-        Took out 2 displays since we only need to have two digits at a time
 */
 
 module Count4( // 4bit counter
    input up, r,
    output reg [3:0] count=4'b0000
     );
-    always @(posedge r, posedge up) begin //Trigger on the button press
-        case({r,up})
-            2'b1X: count = 4'b0000;
-            2'b01: count = count +1;
+    always @(r, up) begin //Trigger on the button press
+        casex({r,up})
+            2'b1X: count <= 4'b0000;
+            2'b01: count <= count + 1;
         endcase
         case(count)
-            4'b1010: count = 4'b0000; //When we reach 10 then its time go back to 0
+            4'b1010: count <= 4'b0000; //When we reach 10 then its time go back to 0
         endcase
     end
 endmodule
@@ -47,7 +34,7 @@ module full_adder( //Full adder moodule
 	assign G = B & C | A & B | A & C;
 endmodule
 
-module full_adder_subtractor( //4-bit rippple-carry-adder-subtractor
+module full_adder_subtractor( //5-bit rippple-carry-adder-subtractor
 	input [3:0] A,B,
 	input C,
 	output [4:0] S
@@ -69,27 +56,19 @@ module output_setter ( //Determines our output
   always@(eq, result, op) begin
     case(eq)
         0: begin //Equal button not pressed so its just the inputs
-            OutputC = A;
-            OutputD = B;
+            OutputC <= A;
+            OutputD <= B;
         end
         1: begin //Equal button was pressed so now determine what the displays must output
-            case({result[4], op})
-                2'b00: begin
-                    OutputC = 4'b0000;
-                    OutputD = result;
-                end 
-                2'b01: begin
-                    OutputC = 4'b0000;
-                    OutputD = result;
-                end 
-                2'b10: begin
-                    OutputC = 4'b0001;
-                    OutputD = result - 4'b1010;
-                end 
-                2'b11: begin
-                    OutputC = 4'b1011;
-                    OutputD = result - 5'b10000;
+            case(op)
+                0: begin
+                    OutputC <= (result > 4'b1010) ? 4'b0001 : 4'b0000;
+                    OutputD <= (result > 4'b1010) ? result - 10 : result;
                 end
+                1: begin
+                    OutputC <= (A >= B) ? 4'b0000 : 4'b1010;
+                    OutputD <= (A >= B) ? result : 16-result;
+                end 
             endcase
         end
     endcase
