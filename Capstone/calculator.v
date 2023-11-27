@@ -5,12 +5,10 @@
     Project Name: 4 bit adder/subtractor with 7seg display
     Project Details:
         1) 2 buttons that allow increment input values on 7seg
-        2) 1 switch to control if its adding or subtracting
-        3) 1 switch to switch between showing the inputs values and showing the result
-        4) 1 switch to reset the displays to 0
+        2) 1 button to control if its adding or subtracting
+        3) 1 button to switch between showing the inputs values and showing the result
+        4) 1 button to reset the displays to 0
         5) 2 7 segment displays to show our values
-
- 	Credit to Andrew Slagel for help on the verilog
 */
 
 module Count4( // 4bit counter
@@ -41,7 +39,7 @@ module full_adder_subtractor( //5-bit rippple-carry-adder-subtractor
 	input C,
 	output [4:0] S
     );
-	wire C1, C2, C3;
+	wire C1, C2, C3, C4;
 	full_adder U0 (.A(A[0]), .B(B[0]^C), .C(C), .F(S[0]), .G(C1));			
 	full_adder U1 (.A(A[1]), .B(B[1]^C), .C(C1), .F(S[1]), .G(C2));
 	full_adder U2 (.A(A[2]), .B(B[2]^C), .C(C2), .F(S[2]), .G(C3));
@@ -63,11 +61,11 @@ module output_setter ( //Determines our output
         end
         1: begin //Equal button was pressed so now determine what the displays must output
             case(op)
-                0: begin //Addition Case
+                0: begin
                     OutputC <= (result > 4'b1010) ? 4'b0001 : 4'b0000;
                     OutputD <= (result > 4'b1010) ? result - 10 : result;
-                end 
-                1: begin //Subtraction Case
+                end
+                1: begin
                     OutputC <= (A >= B) ? 4'b0000 : 4'b1010;
                     OutputD <= (A >= B) ? result : 16-result;
                 end 
@@ -117,4 +115,93 @@ module top ( //Module Instances
 
     Seg7Decode Digit1 (.Data({Disp1}), .seg7({Dig1})); //Display 1
     Seg7Decode Digit2 (.Data({Disp2}), .seg7({Dig2})); //Display 2
+endmodule
+
+//Calculator testbench module
+
+module testbench ();
+    reg Button1,Button2,Equals,Reset,Operation;
+    wire [6:0] Dig1, Dig2;
+    wire[3:0] Feed1, Feed2, Feed3, Feed4;
+
+    top UUT (Button1,Button2,Equals,Reset,Operation,Dig1,Dig2);
+    
+    //Driver module
+    initial begin
+        $dumpfile("calculator.vcd");
+        $dumpvars(0, testbench);
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //1 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //2 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //3 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //4 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //5 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //6 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //7 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //8 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //9 on both
+        Button1=0; Button2=0; Operation=0; Equals=1; Reset=0; #(10); //Displays 18
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //Hits 10 so returns to 0
+
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //1 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //2 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //3 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //4 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //5 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //6 on both
+        Button1=0; Button2=0; Operation=0; Equals=1; Reset=0; #(10); //Display output of 6 + 6 which is 12
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=1; #(10); //Reset it all to 0
+
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //1 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //2 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //3 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //4 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //5 on both
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=1; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //6 on both
+        Button1=0; Button2=0; Operation=1; Equals=1; Reset=0; #(10); //Display output of 6-6 which is 0
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=1; #(10); //Set all to 0 
+
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //1 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //2 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //3 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //4 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //5 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //6 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //7 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //8 on 2nd
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=0; #(10);
+        Button1=0; Button2=1; Operation=0; Equals=0; Reset=0; #(10); //9 on 2nd
+        Button1=0; Button2=0; Operation=1; Equals=1; Reset=0; #(10); //Displays -9
+        Button1=0; Button2=0; Operation=0; Equals=0; Reset=1; #(10); //Set all to 0
+ 
+        $finish;
+    end
 endmodule
