@@ -63,11 +63,11 @@ module output_setter ( //Determines our output
         end
         1: begin //Equal button was pressed so now determine what the displays must output
             case(op)
-                0: begin
+                0: begin //Addition Case
                     OutputC <= (result > 4'b1010) ? 4'b0001 : 4'b0000;
                     OutputD <= (result > 4'b1010) ? result - 10 : result;
-                end
-                1: begin
+                end 
+                1: begin //Subtraction Case
                     OutputC <= (A >= B) ? 4'b0000 : 4'b1010;
                     OutputD <= (A >= B) ? result : 16-result;
                 end 
