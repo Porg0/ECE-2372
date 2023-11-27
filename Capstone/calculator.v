@@ -41,7 +41,7 @@ module full_adder_subtractor( //5-bit rippple-carry-adder-subtractor
 	input C,
 	output [4:0] S
     );
-	wire C1, C2, C3, C4;
+	wire C1, C2, C3;
 	full_adder U0 (.A(A[0]), .B(B[0]^C), .C(C), .F(S[0]), .G(C1));			
 	full_adder U1 (.A(A[1]), .B(B[1]^C), .C(C1), .F(S[1]), .G(C2));
 	full_adder U2 (.A(A[2]), .B(B[2]^C), .C(C2), .F(S[2]), .G(C3));
